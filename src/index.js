@@ -1,13 +1,21 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
+import './index.scss';
 import reportWebVitals from './reportWebVitals';
+import { BrowserRouter } from "react-router-dom";
+import ProviderComposer from './providers/index';
+import { CartProvider } from './providers/CartProvider';
+import AnimatedRoutes from './AnimatedRoutes';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
   <React.StrictMode>
-    <App />
+    <ProviderComposer components={[CartProvider]}>
+      <BrowserRouter>
+        <AnimatedRoutes />
+      </BrowserRouter>
+    </ProviderComposer>
   </React.StrictMode>
 );
 
