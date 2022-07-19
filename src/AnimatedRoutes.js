@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import Restaurants from './pages/Restaurants';
 import Cardapio from './pages/Cardapio';
+import Product from './pages/Product';
 
 import { AnimatePresence } from 'framer-motion';
 
@@ -16,9 +17,9 @@ function AnimatedRoutes() {
     return (
         <AnimatePresence>
             <Routes location={location} key={location.pathname}>
-                <Route path="/" element={<Restaurants navigate={navigate} />} />
-                <Route path="/:restaurantId" element={<Cardapio navigate={navigate} />} />
-                <Route path="/:productId" element={<Cardapio navigate={navigate} />} />
+                <Route path="/" element={<Restaurants location={location} navigate={navigate} />} />
+                <Route path="/:restaurantId" element={<Cardapio location={location} navigate={navigate} />} />
+                <Route path="/:restaurantId/:productId" element={<Product location={location} navigate={navigate} />} />
             </Routes>
         </AnimatePresence>
     )
