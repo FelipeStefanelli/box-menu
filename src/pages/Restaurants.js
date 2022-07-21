@@ -54,7 +54,7 @@ function Restaurants(props) {
                 <p className="title">Restaurantes</p>
                 {restaurants.map((item, id) => {
                     return (
-                        <div className='cards' key={`restaurant-${id}`} onClick={() => props.navigate(`/${item.id}`)}>
+                        <div className='cards' key={`restaurant-${id}`} onClick={() => props.navigate(`/restaurant-${item.id}`)}>
                             <div className='card-image'>
                                 <img src={item.image} alt='restaurant-logo' width={item.width} height={item.height} />
                             </div>

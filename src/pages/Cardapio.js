@@ -212,7 +212,7 @@ function Cardapio(props) {
                             {products.map((product, id) => {
                                 if (product.category === category) {
                                     return (
-                                        <Link className='product-container' state={{ product }} key={`product-${id}`} to={`/${restaurantId}/${id}`} >
+                                        <Link className='product-container' state={{ product }} key={`product-${id}`} to={`/${restaurantId}/product-${id}`} >
                                             <p className='product-info'>
                                                 <span>{product.name}</span>
                                                 <span>{product.description}</span>
