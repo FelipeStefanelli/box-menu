@@ -15,6 +15,16 @@ code {
     monospace;
 }
 
+.title {
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0;
+
+  &.mt-32 {
+    margin-top: 32px;
+  }
+}
+
 // Restaurants
 .restaurants .header {
   padding: 24px 16px;
@@ -27,8 +37,6 @@ code {
 }
 
 .restaurants .body .title {
-  font-size: 20px;
-  font-weight: 700;
   margin: 0 0 16px 0;
 }
 
@@ -62,16 +70,25 @@ code {
   margin-left: 24px;
 }
 
-// Cardapio
-.cardapio .header {
+// Cardapio && Product
+.cardapio .header,
+.product .header {
   position: relative;
-  background: url(./assets/cardapio-header.png) no-repeat center center / cover;
   height: calc(100vw - 156px);
 }
 
-.cardapio .header .shadow {
-  position: absolute;
+.cardapio .header .header-image,
+.product .header .header-image {
   z-index: 1;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.cardapio .header .shadow,
+.product .header .shadow {
+  position: absolute;
+  z-index: 2;
   top: 0;
   left: 0;
   background-image: linear-gradient(rgb(36, 36, 36), transparent, transparent, transparent);
@@ -79,11 +96,13 @@ code {
   height: calc(100vw - 156px);
 }
 
+// Cardapio
 .cardapio .header .logo {
   display: flex;
   align-items: center;
   justify-content: center;
   position: absolute;
+  z-index: 3;
   top: calc(100vw - 210px);
   left: calc(50% - 60px);
   width: 120px;
@@ -146,27 +165,164 @@ code {
   width: 50%;
   margin-right: 16px;
 }
-.product-info  span:nth-child(1) {
-  font-size: 16px;
+
+.product-info span:nth-child(1) {
+  font-size: 20px;
   font-weight: 500;
 }
-.product-info  span:nth-child(2) {
+
+.product-info span:nth-child(2) {
   font-size: 14px;
   color: #4D4D4D;
   margin-top: 8px;
 }
-.product-info  span:nth-child(3) {
+
+.product-info span:nth-child(3) {
   font-size: 16px;
   margin-top: 16px;
 }
+
 .product-image {
   width: 50%;
 }
 
+// Product
+.product .body {
+  padding: 32px 16px;
+}
+
+.product .body .product-info {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-bottom: 1px solid #d3d3d3;
+  margin: 0;
+}
+
+.product .body .product-info .title {
+  margin: 0 0 12px 0;
+}
+
+.product .body .product-info .price {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 16px 0;
+}
+
+.product .body .product-info .price .from {
+  font-size: 14px;
+  font-weight: 400;
+  color: #969696;
+}
+
+.product .body .product-info .description {
+  font-size: 16px;
+  color: #969696;
+  margin: 0 0 8px 0;
+}
+
+.product-additionals .title {
+  margin: 32px 0 4px 0;
+}
+
+.product-additionals .options {
+  font-size: 16px;
+  font-weight: 300;
+  margin: 0 0 16px 0;
+}
+
+.product-additionals ul {
+  list-style: none;
+  padding: 0;
+}
+
+.product-additionals ul li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid #d3d3d3;
+}
+
+.additional-info {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.additional-info span:nth-child(1) {
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 4px;
+}
+
+.additional-info span:nth-child(2) {
+  font-size: 16px;
+  font-weight: 300;
+}
+
+.product-finish {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  width: 100%;
+  border-radius: 4px;
+}
+
+.product-finish .controller {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 110px;
+  padding: 16px;
+  background-color: #000;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+.product-finish .controller p {
+  font-size: 26px;
+  margin: 0;
+  color: #fff;
+}
+
+.product-finish .add {
+  display: flex;
+  align-items: center;
+  width: calc(100% - 142px);
+  padding: 0 16px;
+  background-color: #782FFA;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+.product-finish .add p {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  font-size: 15px;
+  color: #fff;
+}
+
+.product-finish .add p button {
+  height: 100%;
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  font-size: 15px;
+  font-weight: bold;
+}
+.product-finish .add p span:nth-child(1) {
+  font-weight: 400;
+}
 // BackArrow
 .back-arrow {
   position: absolute;
-  z-index: 2;
+  z-index: 4;
   top: 16px;
   left: 16px;
   width: 40px;
@@ -266,4 +422,207 @@ code {
   height: 24px;
   cursor: pointer;
   background: url(./assets/search-icon.svg) no-repeat center center / cover;
+}
+
+// CheckBoxControl
+.checkbox+label {
+  display: block;
+  cursor: pointer;
+}
+
+.checkbox {
+  display: none;
+}
+
+.checkbox+label:before {
+  content: "\2714";
+  border: 1px solid rgb(170, 170, 170);
+  border-radius: 4px;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  padding-left: 3px;
+  padding-bottom: 4px;
+  margin-right: 3px;
+  vertical-align: bottom;
+  color: transparent;
+  transition: .2s;
+}
+
+.checkbox+label:active:before {
+  transform: scale(0);
+}
+
+.checkbox:checked+label:before {
+  background-color: #782FFA;
+  border-color: #782FFA;
+  color: #fff;
+}
+
+.checkbox:disabled+label:before {
+  transform: scale(1);
+  border-color: #aaa;
+}
+
+.checkbox:checked:disabled+label:before {
+  transform: scale(1);
+  background-color: transparent;
+  border-color: transparent;
+}
+
+// NumberControl
+.number-control {
+  display: flex;
+  align-items: center;
+  padding: 3px 8px;
+  background-color: #782FFA;
+  border-radius: 4px;
+}
+
+.number-control p {
+  font-size: 24px;
+  font-weight: 500;
+  color: #fff;
+  margin: 0 16px;
+}
+
+.number-input {
+  display: none;
+}
+
+.less-icon {
+  width: 17px;
+  height: 3px;
+  background: url(./assets/less-arrow.svg) no-repeat center center / contain;
+}
+
+.plus-icon {
+  width: 17px;
+  height: 17px;
+
+  &.white {
+    background: url(./assets/plus-arrow.svg) no-repeat center center / contain;
+  }
+
+  &.blue {
+    background: url(./assets/plus-arrow-blue.svg) no-repeat center center / contain;
+  }
+}
+
+// Cutlery
+.cutlery {
+  margin-top: 32px;
+}
+
+.cutlery ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cutlery ul li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #d3d3d3;
+}
+
+.cutlery ul li div {
+  position: relative;
+}
+
+.cutlery ul li p {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 26px 0;
+}
+
+.cutlery ul li p span:nth-child(1) {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.cutlery ul li p span:nth-child(2) {
+  font-size: 14px;
+  font-weight: 300;
+  margin-top: 4px;
+}
+
+// InputRadio
+.input-radio:checked,
+.input-radio:not(:checked) {
+  position: absolute;
+  left: -9999px;
+}
+
+.input-radio:checked+label,
+.input-radio:not(:checked)+label {
+  padding-left: 28px;
+  cursor: pointer;
+  line-height: 20px;
+  display: inline-block;
+  color: #666;
+}
+
+.input-radio:checked+label:before,
+.input-radio:not(:checked)+label:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  border: 1px solid rgb(192, 192, 192);
+  border-radius: 100%;
+}
+
+.input-radio:checked+label:after,
+.input-radio:not(:checked)+label:after {
+  content: '';
+  width: 12px;
+  height: 12px;
+  background: #782FFA;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  border-radius: 100%;
+  -webkit-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.input-radio:not(:checked)+label:after {
+  opacity: 0;
+  -webkit-transform: scale(0);
+  transform: scale(0);
+}
+
+.input-radio:checked+label:after {
+  opacity: 1;
+  -webkit-transform: scale(1);
+  transform: scale(1);
+}
+
+// TextArea
+.text-area {
+  margin: 16px 0 64px 0;
+  width: calc(100% - 34px);
+  height: 100px;
+  background: transparent;
+  border-color:#d3d3d3;
+  border-radius: 6px 6px 6px 6px;
+  border-style: solid solid solid solid;
+  border-width: 1px 1px 1px 1px;
+  color: #555555;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 1em;
+  line-height: 1.4em;
+  transition: background-color 0.2s ease 0s;
+  padding: 16px;
+  resize: none;
+}
+
+.text-area:focus {
+  background: none repeat scroll 0 0 #FFFFFF;
+  outline-width: 0;
 }
