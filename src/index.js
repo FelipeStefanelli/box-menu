@@ -5,13 +5,15 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from "react-router-dom";
 import ProviderComposer from './providers/index';
 import { CartProvider } from './providers/CartProvider';
+import { RestaurantProvider } from './providers/RestaurantProvider';
+import { ProductProvider } from './providers/ProductProvider';
 import AnimatedRoutes from './AnimatedRoutes';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <React.StrictMode>
-    <ProviderComposer components={[CartProvider]}>
+    <ProviderComposer components={[RestaurantProvider, ProductProvider, CartProvider]}>
       <BrowserRouter>
         <AnimatedRoutes />
       </BrowserRouter>

@@ -1,11 +1,10 @@
 
-import { useEffect, useState } from 'react';
-import { useCart } from '../providers/CartProvider';
-import { Link, useParams } from "react-router-dom";
+import { useEffect } from 'react';
+import { useRestaurant } from '../providers/RestaurantProvider';
+import { useProduct } from '../providers/ProductProvider';
 import { motion } from 'framer-motion';
 import BackArrow from '../components/BackArrow';
 import SearchBar from '../components/SearchBar';
-import SearchIcon from '../assets/search-icon.svg';
 import Coca from '../assets/coca.png';
 import Fanta from '../assets/fanta.png';
 import Burguer1 from '../assets/burguer-1.png';
@@ -21,7 +20,7 @@ const products = [
         name: 'Sanduíche 1',
         description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore ...',
         price: 15.99,
-        image: Burguer1,
+        image: Burguer2,
         additionals: [
             {
                 name: 'Adicionais',
@@ -67,14 +66,14 @@ const products = [
         name: 'Sanduíche 2',
         description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore ...',
         price: 17.99,
-        image: Burguer2,
+        image: Burguer1,
         additionals: [
             {
                 name: 'Adicionais',
                 type: 'select',
                 text: 'Escolha até dois',
                 max: 2,
-                additional: [
+                items: [
                     {
                         name: 'Adicional 01',
                         price: 1.00
@@ -94,7 +93,7 @@ const products = [
                 type: 'number',
                 text: 'Escolha um',
                 max: 2,
-                additional: [
+                items: [
                     {
                         name: 'Adicional 01',
                         price: 1.00
@@ -120,7 +119,7 @@ const products = [
                 type: 'select',
                 text: 'Escolha até dois',
                 max: 2,
-                additional: [
+                items: [
                     {
                         name: 'Adicional 01',
                         price: 1.00
@@ -150,7 +149,7 @@ const products = [
                 type: 'select',
                 text: 'Escolha até dois',
                 max: 2,
-                additional: [
+                items: [
                     {
                         name: 'Adicional 01',
                         price: 1.00
@@ -171,17 +170,14 @@ const products = [
 ];
 
 function Cardapio(props) {
-    const { cart, setCart } = useCart();
-    const [restaurantId, setRestaurantId] = useState('');
-
-    let params = useParams();
-
+    const { restaurant } = useRestaurant();
+    const { setProduct } = useProduct();
     useEffect(() => {
         return () => {
-            if (params.restaurantId) {
-                setRestaurantId(params.restaurantId);
-            };
-        };
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+            }, 500);
+        }
     }, []);
     return (
         <motion.div
@@ -212,14 +208,17 @@ function Cardapio(props) {
                             {products.map((product, id) => {
                                 if (product.category === category) {
                                     return (
-                                        <Link className='product-container' state={{ product }} key={`product-${id}`} to={`/${restaurantId}/product-${id}`} >
+                                        <div className='product-container' key={`product-${id}`} onClick={() => {
+                                            setProduct(product);
+                                            props.navigate(`restaurant/${restaurant.id}/product/${id}`);
+                                        }} >
                                             <p className='product-info'>
                                                 <span>{product.name}</span>
                                                 <span>{product.description}</span>
-                                                <span>{product.price.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'})}</span>
+                                                <span>{product.price.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>
                                             </p>
                                             <img className='product-image' src={product.image} alt={product.name} />
-                                        </Link>
+                                        </div>
                                     )
                                 }
                             })}

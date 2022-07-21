@@ -18,8 +18,8 @@ function AnimatedRoutes() {
         <AnimatePresence>
             <Routes location={location} key={location.pathname}>
                 <Route path="/" element={<Restaurants location={location} navigate={navigate} />} />
-                <Route path="/:restaurantId" element={<Cardapio location={location} navigate={navigate} />} />
-                <Route path="/:restaurantId/:productId" element={<Product location={location} navigate={navigate} />} />
+                <Route path="/restaurant/:restaurantId" element={<Cardapio location={location} navigate={navigate} />} />
+                <Route path="/restaurant/:restaurantId/product/:productId" element={<Product location={location} navigate={navigate} />} />
             </Routes>
         </AnimatePresence>
     )

@@ -1,4 +1,5 @@
 import { useCart } from '../providers/CartProvider';
+import { useRestaurant } from '../providers/RestaurantProvider';
 import Logo from '../assets/boxmenulogo.png';
 import BurguerKing from '../assets/burguerking.png';
 import TacoBell from '../assets/tacobell.png';
@@ -39,12 +40,13 @@ const restaurants = [
 
 function Restaurants(props) {
     const { cart, setCart } = useCart();
+    const { restaurant, setRestaurant } = useRestaurant();
 
     return (
         <motion.div
             className="restaurants"
-            initial={{opacity: 0}}
-            animate={{opacity: 1}}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0, transition: { duration: 0.5 } }}
         >
             <div className='header'>
@@ -54,7 +56,10 @@ function Restaurants(props) {
                 <p className="title">Restaurantes</p>
                 {restaurants.map((item, id) => {
                     return (
-                        <div className='cards' key={`restaurant-${id}`} onClick={() => props.navigate(`/restaurant-${item.id}`)}>
+                        <div className='cards' key={`restaurant-${id}`} onClick={() => {
+                            setRestaurant(item);
+                            props.navigate(`restaurant/${item.id}`);
+                        }}>
                             <div className='card-image'>
                                 <img src={item.image} alt='restaurant-logo' width={item.width} height={item.height} />
                             </div>
