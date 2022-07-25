@@ -5,33 +5,51 @@ import CheckBoxControl from '../components/CheckBoxControl';
 import NumberControl from '../components/NumberControl';
 import { useRestaurant } from '../providers/RestaurantProvider';
 import { useProduct } from '../providers/ProductProvider';
+import { useCart } from '../providers/CartProvider';
 
 
 const Product = (props) => {
-    const [productQuantity, setProductQuantity] = useState(1);
-    const [productTotal, setProductTotal] = useState(0);
+    const { product, setProduct } = useProduct();
+    const { cart, setCart } = useCart();
     const { restaurant, setRestaurant } = useRestaurant('');
-    const { product } = useProduct();
+
+    const [productQuantity, setProductQuantity] = useState(1);
+    const [productTotal, setProductTotal] = useState();
 
     useEffect(() => {
         return () => {
+            if (cart.lenght === 0) {
+                setCart(JSON.parse(localStorage.getItem('Cart')));
+            };
+            if (!restaurant) {
+                setRestaurant(JSON.parse(localStorage.getItem('Restaurant')));
+            };
+            if (!product) {
+                var localProduct = JSON.parse(localStorage.getItem('Product'));
+                setProduct(localProduct);
+                setProductTotal(localProduct.price);
+            } else {
+                setProductTotal(product.price);
+            }
             setTimeout(() => {
                 window.scrollTo(0, 0);
-            }, 500);
+            }, 250);
         }
     }, []);
 
     return (
+        product &&
         <motion.div
             className="product"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.5 } }}
+            exit={{ opacity: 0, transition: { duration: 0.3 } }}
         >
             <div className='header'>
-                <BackArrow to={`/restaurant/${restaurant.id}`} />
+                <BackArrow to={`/restaurant/${restaurant && restaurant.id && restaurant.id}`} />
                 <div className='shadow'></div>
                 <img src={product.image && product.image} alt='header' className='header-image' />
+                <div className='cart-icon white' onClick={() => props.navigate(`/cart`)} ></div>
             </div>
             <div className='body'>
                 <p className='product-info'>
@@ -49,8 +67,8 @@ const Product = (props) => {
                                     return (
                                         <li key={`item-${id}`}>
                                             <p className='additional-info'>
-                                                <span>{item.name}</span>
-                                                <span>+ {item.price.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>
+                                                <span>{item.name && item.name}</span>
+                                                <span>+ {item.price && item.price.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>
                                             </p>
                                             {additional.type === 'select' ?
                                                 <CheckBoxControl id={`checkbox-${id}`} />
@@ -115,8 +133,22 @@ const Product = (props) => {
                 </div>
                 <div className='add'>
                     <p>
-                        <button>ADICIONAR</button>
-                        <span>{productTotal.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>
+                        <button onClick={() => {
+                            setCart([...cart, {
+                                id: `item-${cart.length + 1}`,
+                                product,
+                                qntd: productQuantity,
+                                price: productTotal
+                            }]);
+                            localStorage.setItem('Cart', JSON.stringify([...cart, {
+                                id: `item-${cart.length + 1}`,
+                                product,
+                                qntd: productQuantity,
+                                price: productTotal
+                            }]));
+                            props.navigate(`cart`);
+                        }}>ADICIONAR</button>
+                        <span>{productTotal && productTotal.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>
                     </p>
                 </div>
             </div>

@@ -1,4 +1,3 @@
-import { useCart } from '../providers/CartProvider';
 import { useRestaurant } from '../providers/RestaurantProvider';
 import Logo from '../assets/boxmenulogo.png';
 import BurguerKing from '../assets/burguerking.png';
@@ -12,8 +11,8 @@ const restaurants = [
         id: 1,
         name: 'Burguer King',
         image: BurguerKing,
-        width: 90,
-        height: 70
+        width: 85,
+        height: 60
     },
     {
         id: 2,
@@ -39,8 +38,7 @@ const restaurants = [
 ]
 
 function Restaurants(props) {
-    const { cart, setCart } = useCart();
-    const { restaurant, setRestaurant } = useRestaurant();
+    const { setRestaurant } = useRestaurant();
 
     return (
         <motion.div
@@ -51,6 +49,7 @@ function Restaurants(props) {
         >
             <div className='header'>
                 <img src={Logo} alt='logo' width='120px' height='37px' />
+                <div className='cart-icon black' onClick={() => props.navigate(`/cart`)} ></div>
             </div>
             <div className='body'>
                 <p className="title">Restaurantes</p>
@@ -58,6 +57,7 @@ function Restaurants(props) {
                     return (
                         <div className='cards' key={`restaurant-${id}`} onClick={() => {
                             setRestaurant(item);
+                            localStorage.setItem('Restaurant', JSON.stringify(item));
                             props.navigate(`restaurant/${item.id}`);
                         }}>
                             <div className='card-image'>

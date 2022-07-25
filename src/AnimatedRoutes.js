@@ -8,6 +8,7 @@ import {
 import Restaurants from './pages/Restaurants';
 import Cardapio from './pages/Cardapio';
 import Product from './pages/Product';
+import Cart from './pages/Cart';
 
 import { AnimatePresence } from 'framer-motion';
 
@@ -20,6 +21,7 @@ function AnimatedRoutes() {
                 <Route path="/" element={<Restaurants location={location} navigate={navigate} />} />
                 <Route path="/restaurant/:restaurantId" element={<Cardapio location={location} navigate={navigate} />} />
                 <Route path="/restaurant/:restaurantId/product/:productId" element={<Product location={location} navigate={navigate} />} />
+                <Route path="/cart" element={<Cart location={location} navigate={navigate} />} />
             </Routes>
         </AnimatePresence>
     )

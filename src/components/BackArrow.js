@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 function BackArrow(props) {
     const navigate = useNavigate();
     return (
-        <div className='back-arrow' onClick={() => navigate(`${props.to}`)}></div>
+        <div className={`back-arrow${props.black ? ' black' : ' white'}`} onClick={() => navigate(-1)}></div>
     );
 };
 

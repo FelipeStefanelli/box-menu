@@ -9,13 +9,13 @@ import Coca from '../assets/coca.png';
 import Fanta from '../assets/fanta.png';
 import Burguer1 from '../assets/burguer-1.png';
 import Burguer2 from '../assets/burguer-2.png';
-import Subway from '../assets/subway.svg';
 import HeaderImage from '../assets/cardapio-header.png';
 
 const categories = ['Sanduíches', 'Bebidas']
 
 const products = [
     {
+        id: 'p-1',
         category: 'Sanduíches',
         name: 'Sanduíche 1',
         description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore ...',
@@ -62,6 +62,7 @@ const products = [
         cutlery: true
     },
     {
+        id: 'p-2',
         category: 'Sanduíches',
         name: 'Sanduíche 2',
         description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore ...',
@@ -108,6 +109,7 @@ const products = [
         cutlery: true
     },
     {
+        id: 'p-3',
         category: 'Bebidas',
         name: 'Fanta Laranja',
         description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore ...',
@@ -138,6 +140,7 @@ const products = [
         cutlery: false
     },
     {
+        id: 'p-4',
         category: 'Bebidas',
         name: 'Coca-Cola',
         description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore ...',
@@ -170,13 +173,16 @@ const products = [
 ];
 
 function Cardapio(props) {
-    const { restaurant } = useRestaurant();
+    const { restaurant, setRestaurant } = useRestaurant();
     const { setProduct } = useProduct();
     useEffect(() => {
         return () => {
+            if (!restaurant) {
+                setRestaurant(JSON.parse(localStorage.getItem('Restaurant')));
+            };
             setTimeout(() => {
                 window.scrollTo(0, 0);
-            }, 500);
+            }, 250);
         }
     }, []);
     return (
@@ -184,19 +190,20 @@ function Cardapio(props) {
             className="cardapio"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.5 } }}
+            exit={{ opacity: 0, transition: { duration: 0.3 } }}
         >
             <div className='header'>
                 <BackArrow to='/' />
                 <div className='shadow'></div>
                 <div className='logo'>
-                    <img src={Subway} alt='logo' width={110} height={80} />
+                    <img src={restaurant && restaurant.image && restaurant.image} alt='logo' width={90} height={70} />
                 </div>
                 <img src={HeaderImage} alt='header' className='header-image' />
+                <div className='cart-icon white' onClick={() => props.navigate(`/cart`)} ></div>
             </div>
             <div className='body'>
                 <p className='title'>
-                    <span>Subway</span>
+                    <span>{restaurant && restaurant.name && restaurant.name}</span>
                     <span>Grande Plaza Shopping</span>
                     <span>Aberto agora</span>
                 </p>
@@ -210,7 +217,8 @@ function Cardapio(props) {
                                     return (
                                         <div className='product-container' key={`product-${id}`} onClick={() => {
                                             setProduct(product);
-                                            props.navigate(`restaurant/${restaurant.id}/product/${id}`);
+                                            localStorage.setItem('Product', JSON.stringify(product));
+                                            props.navigate(`restaurant/${restaurant.id}/product/${product.id}`);
                                         }} >
                                             <p className='product-info'>
                                                 <span>{product.name}</span>
