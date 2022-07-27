@@ -6,6 +6,8 @@ import NumberControl from '../components/NumberControl';
 import { useRestaurant } from '../providers/RestaurantProvider';
 import { useProduct } from '../providers/ProductProvider';
 import { useCart } from '../providers/CartProvider';
+import { useParams } from 'react-router-dom';
+
 
 const Product = (props) => {
     const { product, setProduct } = useProduct();
@@ -15,8 +17,10 @@ const Product = (props) => {
     const [productQuantity, setProductQuantity] = useState(1);
     const [productTotal, setProductTotal] = useState('');
 
+    let { productId } = useParams();
+
     useEffect(() => {
-        if (cart && cart.length === 0) {
+        if (cart.length === 0) {
             setCart(JSON.parse(localStorage.getItem('Cart')));
         };
         if (!restaurant) {
@@ -26,38 +30,36 @@ const Product = (props) => {
             var localProduct = JSON.parse(localStorage.getItem('Product'));
             setProduct(localProduct);
             setProductTotal(localProduct.price);
-            setTimeout(() => {
-                if (localProduct.additionals) {
-                    console.log(localProduct)
-                    localProduct.additionals.map(additional => {
-                        additional.items.map((item, id) => {
-                            if (additional.type === 'number') {
-                                additional.items.map((item, id) => {
-                                    console.log(id)
-                                    document.getElementById(`number-${id}`).value = 0;
-                                });
-                            };
-                        })
-                    });
-                };
-            }, 200);
         } else {
             setProductTotal(product.price);
-            setTimeout(() => {
-                if (product.additionals) {
-                    console.log(product)
-                    product.additionals.map(additional => {
-                        if (additional.type === 'number') {
-                            additional.items.map((item, id) => {
-                                console.log(id)
-                                document.getElementById(`number-${id}`).value = 0;
-                            });
+        };
+        setTimeout(() => {
+            if (props.location.state && props.location.state.productObject) {
+                console.log(props.location.state.productObject);
+                if (props.location.state.productObject && props.location.state.productObject.qntd) {
+                    setProductQuantity(props.location.state.productObject.qntd)
+                };
+                if (props.location.state.productObject && props.location.state.productObject.cutlery) {
+                    document.getElementById('true-cutlery').checked = true;
+                };
+                if (props.location.state.productObject && props.location.state.productObject.checkboxs) {
+                    props.location.state.productObject.checkboxs.map((checkbox, id) => {
+                        if (checkbox.value === true) {
+                            setTimeout(() => {
+                                document.getElementById(`checkbox-${id}`).checked = true;
+                            }, 100);
                         };
                     });
                 };
-            }, 200);
-        };
-        setTimeout(() => {
+                if (props.location.state.productObject && props.location.state.productObject.numbers) {
+                    props.location.state.productObject.numbers.map((number, id) => {
+                        if (number.value !== '0') {
+                            console.log(number.value)
+                            document.getElementById(`number-${id}`).value = number.value;
+                        };
+                    });
+                };
+            };
             window.scrollTo(0, 0);
         }, 250);
     }, []);
@@ -170,65 +172,40 @@ const Product = (props) => {
                                         checkboxs.push({
                                             'name': item.name,
                                             'value': value
-                                        })
+                                        });
                                     } else {
                                         let value = document.getElementById(`number-${id}`).value;
                                         numbers.push({
                                             'name': item.name,
                                             'value': value
-                                        })
-                                    }
-                                })
-                            })
+                                        });
+                                    };
+                                });
+                            });
                             let cutlery = false;
                             if (document.querySelector('input[name="radio-group"]:checked')) {
                                 cutlery = document.querySelector('input[name="radio-group"]:checked').id === 'true-cutlery' ? true : false;
                             };
-                            if (cart && cart.length !== 0) {
-                                setCart([...cart, {
-                                    id: `item-${cart.length + 1}`,
-                                    product,
-                                    qntd: productQuantity,
-                                    price: productTotal,
-                                    checkboxs: [...checkboxs],
-                                    numbers: [...numbers],
-                                    cutlery: cutlery,
-                                    restaurant: restaurant.name && restaurant.name
-                                }]);
-                                localStorage.setItem('Cart', JSON.stringify([...cart, {
-                                    id: `item-${cart.length + 1}`,
-                                    product,
-                                    qntd: productQuantity,
-                                    price: productTotal,
-                                    checkboxs: [...checkboxs],
-                                    numbers: [...numbers],
-                                    cutlery: cutlery,
-                                    restaurant: restaurant.name && restaurant.name
-                                }]));
-                            } else {
-                                setCart([{
-                                    id: `item-1`,
-                                    product,
-                                    qntd: productQuantity,
-                                    price: productTotal,
-                                    checkboxs: [...checkboxs],
-                                    numbers: [...numbers],
-                                    cutlery: cutlery,
-                                    restaurant: restaurant.name && restaurant.name
-                                }]);
-                                localStorage.setItem('Cart', JSON.stringify([{
-                                    id: `item-1`,
-                                    product,
-                                    qntd: productQuantity,
-                                    price: productTotal,
-                                    checkboxs: [...checkboxs],
-                                    numbers: [...numbers],
-                                    cutlery: cutlery,
-                                    restaurant: restaurant.name && restaurant.name
-                                }]));
-                            }
+                            let newCart = cart.filter(item => {
+                                if (item.id !== productId) {
+                                    return item;
+                                }
+                            });
+                            let id = parseInt(productId.split('-')[1]) - 1;
+                            newCart.splice(id, 0, {
+                                id: productId,
+                                product,
+                                qntd: productQuantity,
+                                price: productTotal,
+                                checkboxs: [...checkboxs],
+                                numbers: [...numbers],
+                                cutlery: cutlery
+                            });
+                            console.log('newCart', newCart);
+                            setCart(newCart);
+                            localStorage.setItem('Cart', JSON.stringify([...newCart]));
                             props.navigate(`cart`);
-                        }}>ADICIONAR</button>
+                        }}>SALVAR</button>
                         <span>{productTotal && productTotal.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>
                     </p>
                 </div>

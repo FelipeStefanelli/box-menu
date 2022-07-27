@@ -1,45 +1,19 @@
 import { useRestaurant } from '../providers/RestaurantProvider';
+import { useCart } from '../providers/CartProvider';
 import Logo from '../assets/boxmenulogo.png';
-import BurguerKing from '../assets/burguerking.png';
-import TacoBell from '../assets/tacobell.png';
-import Subway from '../assets/subway.svg';
-import Bobs from '../assets/bobs.svg';
 import { motion } from 'framer-motion';
-
-const restaurants = [
-    {
-        id: 1,
-        name: 'Burguer King',
-        image: BurguerKing,
-        width: 85,
-        height: 60
-    },
-    {
-        id: 2,
-        name: 'Subway',
-        image: Subway,
-        width: 80,
-        height: 55
-    },
-    {
-        id: 3,
-        name: "Bob's",
-        image: Bobs,
-        width: 70,
-        height: 55
-    },
-    {
-        id: 4,
-        name: 'Taco Bell',
-        image: TacoBell,
-        width: 80,
-        height: 55
-    }
-]
+import { useEffect } from 'react';
 
 function Restaurants(props) {
     const { setRestaurant } = useRestaurant();
-
+    const { cart, setCart } = useCart();
+    useEffect(() => {
+        return () => {
+            if (cart.length === 0) {
+                setCart(JSON.parse(localStorage.getItem('Cart')));
+            };
+        }
+    }, []);
     return (
         <motion.div
             className="restaurants"
@@ -49,11 +23,13 @@ function Restaurants(props) {
         >
             <div className='header'>
                 <img src={Logo} alt='logo' width='120px' height='37px' />
-                <div className='cart-icon black' onClick={() => props.navigate(`/cart`)} ></div>
+                {cart && cart.length !== 0 &&
+                    <div className='cart-icon black' onClick={() => props.navigate(`/cart`)} ></div>
+                }
             </div>
             <div className='body'>
                 <p className="title">Restaurantes</p>
-                {restaurants.map((item, id) => {
+                {props.restaurants && props.restaurants.map((item, id) => {
                     return (
                         <div className='cards' key={`restaurant-${id}`} onClick={() => {
                             setRestaurant(item);

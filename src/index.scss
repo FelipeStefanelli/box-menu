@@ -337,7 +337,7 @@ code {
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 1px;
-  margin: 0;
+  margin: 0 0 0 16px;
 }
 
 .cart .body {
@@ -390,6 +390,7 @@ code {
 .cart-item .info p:nth-child(1) {
   font-weight: 500;
   margin: 0 0 8px 0;
+  font-size: 14px;
 }
 
 .cart-item .info p:nth-child(2) {
@@ -550,6 +551,13 @@ code {
   margin: 0;
 }
 
+.restaurant-name {
+  font-size: 16px;
+  font-weight: 500;
+  color: #121212;
+  margin: 16px 0 8px 0;
+}
+
 // Cart Icon
 .cart-icon {
   position: absolute;
@@ -558,13 +566,13 @@ code {
   height: 36px;
 
   &.white {
-    background: url(./assets/cart-white.png) no-repeat center center / cover;
-    top: 16px;
-    right: 16px;
+    background: url(./assets/cart-white.svg) no-repeat center center / contain;
+    top: 18px;
+    right: 18px;
   }
 
   &.black {
-    background: url(./assets/cart-black.png) no-repeat center center / cover;
+    background: url(./assets/cart-black.svg) no-repeat center center / contain;
     top: 24px;
     right: 24px;
   }
@@ -574,17 +582,17 @@ code {
 .back-arrow {
   position: absolute;
   z-index: 4;
-  top: 16px;
-  left: 16px;
-  width: 40px;
-  height: 40px;
+  top: 18px;
+  left: 18px;
+  width: 28px;
+  height: 28px;
 
   &.white {
-    background: url(./assets/back-arrow.svg) no-repeat center center / cover;
+    background: url(./assets/back-arrow.png) no-repeat center center / contain;
   }
 
   &.black {
-    background: url(./assets/back-arrow-black.svg) no-repeat center center / cover;
+    background: url(./assets/back-arrow-black.png) no-repeat center center / contain;
   }
 }
 
@@ -679,7 +687,7 @@ code {
   width: 24px;
   height: 24px;
   cursor: pointer;
-  background: url(./assets/search-icon.svg) no-repeat center center / cover;
+  background: url(./assets/search-icon.svg) no-repeat center center / contain;
 }
 
 // CheckBoxControl
@@ -737,15 +745,15 @@ code {
   border-radius: 4px;
 }
 
-.number-control p {
+.number-input {
+  width: 20px;
+  background-color: transparent;
+  border: none;
   font-size: 22px;
   font-weight: 500;
   color: #fff;
   margin: 0 16px;
-}
-
-.number-input {
-  display: none;
+  text-align: center;
 }
 
 .less-icon {
@@ -912,7 +920,7 @@ code {
 }
 
 .modal-content p {
-  margin: 0;
+  margin: 0 0 12px 0;
 }
 
 .modal-buttons {

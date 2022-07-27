@@ -11,24 +11,37 @@ function Cart(props) {
     const { product, setProduct } = useProduct();
 
     const [subTotal, setSubTotal] = useState(0);
-    const [deliveryTax, setDeliveryTax] = useState(7.90);
-    const [cupom, setCupom] = useState(15);
+    const [deliveryTax, setDeliveryTax] = useState(15.90);
+    const [cupom, setCupom] = useState(10);
+    const [groupedKeys, setGroupedKeys] = useState([]);
+    const [groupedValues, setGroupedValues] = useState([]);
 
     useEffect(() => {
         return () => {
             let total = 0;
-            console.log(JSON.parse(localStorage.getItem('Cart')))
-            if (cart.length === 0) {
+            if (cart && cart.length === 0 && localStorage.getItem('Cart')) {
                 setCart(JSON.parse(localStorage.getItem('Cart')));
                 JSON.parse(localStorage.getItem('Cart')).map(cartItem => {
                     total += cartItem.price;
                 });
                 setSubTotal(total);
-            } else {
+                const groupedCart = groupBy(JSON.parse(localStorage.getItem('Cart')), 'restaurant');
+                const propertyKeys = Object.keys(groupedCart);
+                const propertyValues = Object.values(groupedCart);
+                setGroupedKeys(propertyKeys);
+                setGroupedValues(propertyValues);
+            } else if(cart && cart.length !== 0) {
                 cart.map(cartItem => {
                     total += cartItem.price;
                 });
                 setSubTotal(total);
+                const groupedCart = groupBy(cart, 'restaurant');
+                const propertyKeys = Object.keys(groupedCart);
+                const propertyValues = Object.values(groupedCart);
+                setGroupedKeys(propertyKeys);
+                setGroupedValues(propertyValues);
+            } else {
+                props.navigate('/');
             };
             if (!restaurant) {
                 setRestaurant(JSON.parse(localStorage.getItem('Restaurant')));
@@ -41,7 +54,12 @@ function Cart(props) {
             }, 250);
         }
     }, []);
-
+    function groupBy(array, key) {
+        return array.reduce((acc, item) => ({
+            ...acc,
+            [item[key]]: [...(acc[item[key]] ?? []), item],
+        }), {})
+    };
     const removeItem = (item) => {
         let total = 0;
         let newCart = cart.filter(cartItem => {
@@ -55,6 +73,9 @@ function Cart(props) {
             total += cartItem.price;
         });
         setSubTotal(total);
+        if (newCart.length === 0) {
+            props.navigate('/');
+        }
     }
     return (
         <motion.div
@@ -68,32 +89,53 @@ function Cart(props) {
                 <p>CARRINHO</p>
             </div>
             <div className='body'>
-                {cart && cart.map((item, id) => {
+                {groupedKeys && groupedKeys.map((key, id) => {
                     return (
-                        <div className='cart-item' key={`cart-item-${id}`}>
-                            <div className='image'>
-                                <img alt='cart-item' src={item.product && item.product.image && item.product.image} />
-                                <div className='item-qntd'>{item.qntd && item.qntd}</div>
-                            </div>
-                            <div className='info'>
-                                <p>{item.product && item.product.name && item.product.name}</p>
-                                <p>
-                                    {item.product && item.product.additionals && item.product.additionals.map((additional, id) => {
-                                        return (
-                                            <span key={`additional-${id}`}>{additional.name}</span>
-                                        )
-                                    })}
-                                </p>
-                                <p>Total {item.price && item.price.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</p>
-                                <div className='buttons'>
-                                    <button onClick={() => {
-                                        setProduct(item.product);
-                                        localStorage.setItem('Product', JSON.stringify(item.product));
-                                        props.navigate(`restaurant/${restaurant.id}/product/${item.id}`);
-                                    }}>Editar</button>
-                                    <button onClick={() => removeItem(item)}>Remover</button>
-                                </div>
-                            </div>
+                        <div key={`grouped-${id}`}>
+                            <p className='restaurant-name'>{key}</p>
+                            {cart && cart.map((item, id) => {
+                                if (key === item.restaurant) {
+                                    return (
+                                        <div className='cart-item' key={`cart-item-${id}`}>
+                                            <div className='image'>
+                                                <img alt='cart-item' src={item.product && item.product.image && item.product.image} />
+                                                <div className='item-qntd'>{item.qntd && item.qntd}</div>
+                                            </div>
+                                            <div className='info'>
+                                                <p>{item.product && item.product.name && item.product.name}</p>
+                                                <p>
+                                                    {item.checkboxs && item.checkboxs && item.checkboxs.map((additional, id) => {
+                                                        if (additional.value) {
+                                                            return (
+                                                                <span key={`additional-${id}`}>{additional.name}</span>
+                                                            )
+                                                        }
+                                                    })}
+                                                    {item.numbers && item.numbers && item.numbers.map((additional, id) => {
+                                                        if (additional.value !== '0') {
+                                                            return (
+                                                                <span key={`additional-${id}`}>{additional.value}x {additional.name}</span>
+                                                            )
+                                                        }
+                                                    })}
+                                                    {item.cutlery &&
+                                                        <span key={`additional-${id}`}>Talheres inclusos</span>
+                                                    }
+                                                </p>
+                                                <p>Total {item.price && item.price.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</p>
+                                                <div className='buttons'>
+                                                    <button onClick={() => {
+                                                        setProduct(item.product);
+                                                        localStorage.setItem('Product', JSON.stringify(item.product));
+                                                        props.navigate(`restaurant/${restaurant.id}/product/${item.id}/edit`, { state: { productObject: item } });
+                                                    }}>Editar</button>
+                                                    <button onClick={() => removeItem(item)}>Remover</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                }
+                            })}
                         </div>
                     )
                 })}

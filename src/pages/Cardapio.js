@@ -2,6 +2,7 @@
 import { useEffect } from 'react';
 import { useRestaurant } from '../providers/RestaurantProvider';
 import { useProduct } from '../providers/ProductProvider';
+import { useCart } from '../providers/CartProvider';
 import { motion } from 'framer-motion';
 import BackArrow from '../components/BackArrow';
 import SearchBar from '../components/SearchBar';
@@ -49,11 +50,11 @@ const products = [
                 max: 1,
                 items: [
                     {
-                        name: 'Adicional 01',
+                        name: 'Molho 01',
                         price: 1.00
                     },
                     {
-                        name: 'Adicional 02',
+                        name: 'Molho 02',
                         price: 2.00
                     }
                 ]
@@ -96,11 +97,11 @@ const products = [
                 max: 2,
                 items: [
                     {
-                        name: 'Adicional 01',
+                        name: 'Molho 01',
                         price: 1.00
                     },
                     {
-                        name: 'Adicional 02',
+                        name: 'Molho 02',
                         price: 2.00
                     }
                 ]
@@ -115,28 +116,6 @@ const products = [
         description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore ...',
         price: 7.99,
         image: Fanta,
-        additionals: [
-            {
-                name: 'Adicionais',
-                type: 'select',
-                text: 'Escolha até dois',
-                max: 2,
-                items: [
-                    {
-                        name: 'Adicional 01',
-                        price: 1.00
-                    },
-                    {
-                        name: 'Adicional 02',
-                        price: 2.00
-                    },
-                    {
-                        name: 'Adicional 03',
-                        price: 3.00
-                    }
-                ]
-            }
-        ],
         cutlery: false
     },
     {
@@ -146,40 +125,25 @@ const products = [
         description: 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore ...',
         price: 8.99,
         image: Coca,
-        additionals: [
-            {
-                name: 'Adicionais',
-                type: 'select',
-                text: 'Escolha até dois',
-                max: 2,
-                items: [
-                    {
-                        name: 'Adicional 01',
-                        price: 1.00
-                    },
-                    {
-                        name: 'Adicional 02',
-                        price: 2.00
-                    },
-                    {
-                        name: 'Adicional 03',
-                        price: 3.00
-                    }
-                ]
-            }
-        ],
         cutlery: false
     }
 ];
 
 function Cardapio(props) {
     const { restaurant, setRestaurant } = useRestaurant();
-    const { setProduct } = useProduct();
+    const { product, setProduct } = useProduct();
+    const { cart, setCart } = useCart();
     useEffect(() => {
         return () => {
+            if (cart && cart.length === 0) {
+                setCart(JSON.parse(localStorage.getItem('Cart')));
+            };
             if (!restaurant) {
                 setRestaurant(JSON.parse(localStorage.getItem('Restaurant')));
             };
+            if (!product) {
+                setProduct(JSON.parse(localStorage.getItem('Product')));
+            }
             setTimeout(() => {
                 window.scrollTo(0, 0);
             }, 250);
@@ -199,7 +163,9 @@ function Cardapio(props) {
                     <img src={restaurant && restaurant.image && restaurant.image} alt='logo' width={90} height={70} />
                 </div>
                 <img src={HeaderImage} alt='header' className='header-image' />
-                <div className='cart-icon white' onClick={() => props.navigate(`/cart`)} ></div>
+                {cart && cart.length !== 0 &&
+                    <div className='cart-icon white' onClick={() => props.navigate(`/cart`)} ></div>
+                }
             </div>
             <div className='body'>
                 <p className='title'>
