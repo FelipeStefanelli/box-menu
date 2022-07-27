@@ -14,7 +14,6 @@ function Cart(props) {
     const [deliveryTax, setDeliveryTax] = useState(15.90);
     const [cupom, setCupom] = useState(10);
     const [groupedKeys, setGroupedKeys] = useState([]);
-    const [groupedValues, setGroupedValues] = useState([]);
 
     useEffect(() => {
         return () => {
@@ -29,7 +28,6 @@ function Cart(props) {
                 const propertyKeys = Object.keys(groupedCart);
                 const propertyValues = Object.values(groupedCart);
                 setGroupedKeys(propertyKeys);
-                setGroupedValues(propertyValues);
             } else if(cart && cart.length !== 0) {
                 cart.map(cartItem => {
                     total += cartItem.price;
@@ -39,7 +37,6 @@ function Cart(props) {
                 const propertyKeys = Object.keys(groupedCart);
                 const propertyValues = Object.values(groupedCart);
                 setGroupedKeys(propertyKeys);
-                setGroupedValues(propertyValues);
             } else {
                 props.navigate('/');
             };
