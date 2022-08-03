@@ -5,10 +5,12 @@ const ProductContext = createContext({});
 export const ProductProvider = (props) => {
 
     const [product, setProduct] = useState(null);
+    const [products, setProducts] = useState(null);
+    const [categories, setCategories] = useState(null);
 
     return (
         <ProductContext.Provider value={{
-            setProduct, product
+            setProduct, product, setProducts, products, setCategories, categories
         }}>
             {props.children}
         </ProductContext.Provider>

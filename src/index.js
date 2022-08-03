@@ -12,13 +12,11 @@ import AnimatedRoutes from './AnimatedRoutes';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
-  <React.StrictMode>
     <ProviderComposer components={[RestaurantProvider, ProductProvider, CartProvider]}>
       <BrowserRouter>
         <AnimatedRoutes />
       </BrowserRouter>
     </ProviderComposer>
-  </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

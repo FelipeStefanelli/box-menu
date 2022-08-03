@@ -10,44 +10,11 @@ import Cardapio from './pages/Cardapio';
 import Product from './pages/Product';
 import EditProduct from './pages/EditProduct';
 import Cart from './pages/Cart';
-
-import BurguerKing from './assets/burguerking.png';
-import TacoBell from './assets/tacobell.png';
-import Subway from './assets/subway.svg';
-import Bobs from './assets/bobs.svg';
+import HopyPayment from './pages/HopyPayment';
+//import OrderCreated from './pages/OrderCreated';
+//import OrderDetails from './pages/OrderDetails';
 
 import { AnimatePresence } from 'framer-motion';
-
-const restaurants = [
-    {
-        id: 1,
-        name: 'Burguer King',
-        image: BurguerKing,
-        width: 85,
-        height: 60
-    },
-    {
-        id: 2,
-        name: 'Subway',
-        image: Subway,
-        width: 80,
-        height: 55
-    },
-    {
-        id: 3,
-        name: "Bob's",
-        image: Bobs,
-        width: 70,
-        height: 55
-    },
-    {
-        id: 4,
-        name: 'Taco Bell',
-        image: TacoBell,
-        width: 80,
-        height: 55
-    }
-];
 
 function AnimatedRoutes() {
     const location = useLocation();
@@ -55,11 +22,14 @@ function AnimatedRoutes() {
     return (
         <AnimatePresence>
             <Routes location={location} key={location.pathname}>
-                <Route path="/" element={<Restaurants location={location} navigate={navigate} restaurants={restaurants} />} />
+                <Route path="/" element={<Restaurants location={location} navigate={navigate} />} />
                 <Route path="/restaurant/:restaurantId" element={<Cardapio location={location} navigate={navigate} />} />
-                <Route path="/restaurant/:restaurantId/product/:productId" element={<Product location={location} navigate={navigate} />} />
-                <Route path="/restaurant/:restaurantId/product/:productId/edit" element={<EditProduct location={location} navigate={navigate} restaurants={restaurants} />} />
+                <Route path="/product/:productId" element={<Product location={location} navigate={navigate} />} />
+                <Route path="/product/:productId/edit" element={<EditProduct location={location} navigate={navigate} />} />
                 <Route path="/cart" element={<Cart location={location} navigate={navigate} />} />
+                <Route path="/payment" element={<HopyPayment location={location} navigate={navigate} />} />
+                {/* <Route path="/created" element={<OrderCreated location={location} navigate={navigate} />} />
+                <Route path="/details" element={<OrderDetails location={location} navigate={navigate} />} /> */}
             </Routes>
         </AnimatePresence>
     )

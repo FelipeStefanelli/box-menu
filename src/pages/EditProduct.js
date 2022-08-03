@@ -6,21 +6,26 @@ import NumberControl from '../components/NumberControl';
 import { useRestaurant } from '../providers/RestaurantProvider';
 import { useProduct } from '../providers/ProductProvider';
 import { useCart } from '../providers/CartProvider';
+import Skeleton from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
 
-
-const Product = (props) => {
+const EditProduct = (props) => {
     const { product, setProduct } = useProduct();
     const { cart, setCart } = useCart();
     const { restaurant, setRestaurant } = useRestaurant('');
 
     const [productQuantity, setProductQuantity] = useState(1);
-    const [productTotal, setProductTotal] = useState('');
+    const [productPrice, setProductPrice] = useState(0);
+    const [productAdditionalsTotal, setProductAdditionalsTotal] = useState(0);
+    const [totalPrice, setTotalPrice] = useState(0);
+    const [editProduct, setEditProduct] = useState(null);
+
+    const [loading, setLoading] = useState(false);
 
     let { productId } = useParams();
 
     useEffect(() => {
-        if (cart.length === 0) {
+        if (cart && cart.length === 0) {
             setCart(JSON.parse(localStorage.getItem('Cart')));
         };
         if (!restaurant) {
@@ -29,56 +34,46 @@ const Product = (props) => {
         if (!product) {
             var localProduct = JSON.parse(localStorage.getItem('Product'));
             setProduct(localProduct);
-            setProductTotal(localProduct.price);
+            setProductPrice(parseFloat(localProduct.price));
+            setTotalPrice(parseFloat(localProduct.price));
         } else {
-            setProductTotal(product.price);
+            setProductPrice(parseFloat(product.price));
+            setTotalPrice(parseFloat(product.price));
         };
         setTimeout(() => {
             if (props.location.state && props.location.state.productObject) {
-                console.log(props.location.state.productObject);
+                console.log('FFFFFFFFF', props.location.state.productObject);
+                let total = 0;
+                setProductAdditionalsTotal(props.location.state.productObject.productAdditionalsTotal);
+                setEditProduct(props.location.state.productObject);
                 if (props.location.state.productObject && props.location.state.productObject.qntd) {
                     setProductQuantity(props.location.state.productObject.qntd)
                 };
-                if (props.location.state.productObject && props.location.state.productObject.cutlery) {
-                    document.getElementById('true-cutlery').checked = true;
-                };
-                if (props.location.state.productObject && props.location.state.productObject.checkboxs) {
-                    props.location.state.productObject.checkboxs.map((checkbox, id) => {
-                        if (checkbox.value === true) {
-                            setTimeout(() => {
-                                document.getElementById(`checkbox-${id}`).checked = true;
-                            }, 100);
-                        };
+                if (props.location.state.productObject && props.location.state.productObject.additionals) {
+                    props.location.state.productObject.additionals.map((add, id) => {
+                        setTimeout(() => {
+                            //console.log(document.getElementById(`number-${add.additional.uuid}`))
+                            document.getElementById(`number-${add.additional.uuid}`).value = add.value;
+                        }, 200);
                     });
-                };
-                if (props.location.state.productObject && props.location.state.productObject.numbers) {
-                    props.location.state.productObject.numbers.map((number, id) => {
-                        if (number.value !== '0') {
-                            console.log(number.value)
-                            document.getElementById(`number-${id}`).value = number.value;
-                        };
-                    });
+                    setTotalPrice(props.location.state.productObject.price);
                 };
             };
             window.scrollTo(0, 0);
         }, 250);
     }, []);
-
     return (
         product &&
         <motion.div
             className="product"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.3 } }}
+            animate={{ opacity: 1, transition: { duration: 1.3 } }}
+            exit={{ opacity: 0, transition: { duration: 0.5 } }}
         >
             <div className='header'>
                 <BackArrow to={`/restaurant/${restaurant && restaurant.id && restaurant.id}`} />
                 <div className='shadow'></div>
-                <img src={product.image && product.image} alt='header' className='header-image' />
-                {/* {cart.length &&
-                    <div className='cart-icon white' onClick={() => props.navigate(`/cart`)} ></div>
-                } */}
+                <img src={product.image_path && product.image_path} alt='header' className='header-image' />
             </div>
             <div className='body'>
                 <p className='product-info'>
@@ -86,131 +81,130 @@ const Product = (props) => {
                     <span className='price'><span className='from'>A partir de </span>{product.price && product.price.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>
                     <span className='description'>{product.description && product.description}</span>
                 </p>
-                {product.additionals && product.additionals.map((additional, id) => {
-                    return (
-                        <div className='product-additionals' key={`additionals-${id}`}>
-                            <p className='title'>{additional.name}</p>
-                            <p className='options'>{additional.text}</p>
-                            <ul>
-                                {additional.items.map((item, id) => {
-                                    return (
-                                        <li key={`item-${id}`}>
-                                            <p className='additional-info'>
-                                                <span>{item.name && item.name}</span>
-                                                <span>+ {item.price && item.price.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>
-                                            </p>
-                                            {additional.type === 'select' ?
-                                                <CheckBoxControl id={`checkbox-${id}`} setProductTotal={(value) => setProductTotal(value)} productTotal={productTotal} price={item.price} />
-                                                : additional.type === 'number' ?
-                                                    <NumberControl id={`number-${id}`} max={additional.max} setProductTotal={(value) => setProductTotal(value)} productTotal={productTotal} price={item.price} />
-                                                    :
-                                                    <></>
-                                            }
-                                        </li>
-                                    )
-                                })}
-                            </ul>
-                        </div>
-                    )
-                })}
-                {product.cutlery &&
-                    <div className='cutlery'>
-                        <p className='title'>Deseja talheres?</p>
-                        <ul>
-                            <li>
-                                <p>
-                                    <span>Sim, preciso de talheres</span>
-                                    <span>+ R$00,00</span>
-                                </p>
-                                <div>
-                                    <input className='input-radio' type="radio" id="true-cutlery" name="radio-group" />
-                                    <label htmlFor="true-cutlery"></label>
-                                </div>
-                            </li>
-                            <li>
-                                <p>Não preciso de talheres</p>
-                                <div>
-                                    <input className='input-radio' type="radio" id="false-cutlery" name="radio-group" defaultChecked />
-                                    <label htmlFor="false-cutlery"></label>
-                                </div>
-                            </li>
-                        </ul>
+                {loading ?
+                    <div className='skeleton-container product'>
+                        <Skeleton style={{ height: '24px', marginBottom: '24px', marginTop: '32px', position: 'absolute', top: '0', zIndex: 2 }} />
+                        <Skeleton style={{ height: '262px', marginBottom: '16px', position: 'absolute', top: '72px', zIndex: 2 }} />
                     </div>
+                    :
+                    <>
+                        {editProduct && editProduct.groups && editProduct.groups.map((group, id) => {
+                            //console.log('edit',editProduct);
+                            if (group.additional) {
+                                return (
+                                    <div className='product-additionals' key={`additionals-${id}`}>
+                                        <p className='title'>{group.additional.name && group.additional.name}</p>
+                                        <ul>
+                                            {editProduct.additionals.map((additional, id) => {
+                                                if (group.additional.uuid === additional.additional.group_uuid) {
+                                                    return (
+                                                        <li key={`additional-${id}`}>
+                                                            <p className='additional-info'>
+                                                                <span>{additional.additional && additional.additional.name && additional.additional.name}</span>
+                                                                <span>+ {additional.additional && additional.additional.price && additional.additional.price.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>
+                                                            </p>
+                                                            <NumberControl id={`number-${additional.additional && additional.additional.uuid && additional.additional.uuid}`} max={additional.additional && additional.additional.max && additional.additional.max} price={additional.additional && additional.additional.price && additional.additional.price} setProductAdditionalsTotal={(value) => setProductAdditionalsTotal(value)} productAdditionalsTotal={productAdditionalsTotal} setTotalPrice={(value) => setTotalPrice(value)} totalPrice={totalPrice} productQuantity={productQuantity} />
+                                                        </li>
+                                                    )
+                                                }
+                                            })}
+                                        </ul>
+                                    </div>
+                                )
+                            }
+                        })}
+                        {product.cutlery &&
+                            <div className='cutlery'>
+                                <p className='title'>Deseja talheres?</p>
+                                <ul>
+                                    <li>
+                                        <p>
+                                            <span>Sim, preciso de talheres</span>
+                                            <span>+ R$00,00</span>
+                                        </p>
+                                        <div>
+                                            <input className='input-radio' type="radio" id="true-cutlery" name="radio-group" />
+                                            <label htmlFor="true-cutlery"></label>
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <p>Não preciso de talheres</p>
+                                        <div>
+                                            <input className='input-radio' type="radio" id="false-cutlery" name="radio-group" defaultChecked />
+                                            <label htmlFor="false-cutlery"></label>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        }
+                        <p className='title mt-32'>Observações</p>
+                        <textarea
+                            className='text-area'
+                            placeholder="Exemplo: Quero sem cebola"
+                            role="textbox"
+                            aria-autocomplete="list"
+                            aria-haspopup="true"
+                        />
+                    </>
                 }
-                <p className='title mt-32'>Observações</p>
-                <textarea
-                    className='text-area'
-                    placeholder="Exemplo: Quero sem cebola"
-                    role="textbox"
-                    aria-autocomplete="list"
-                    aria-haspopup="true"
-                />
             </div>
             <div className='product-finish'>
-                <div className='controller'>
+            <div className='controller'>
                     <div className='less-icon' onClick={() => {
-                        if (productQuantity !== 0) {
+                        if (productQuantity !== 0 && productQuantity !== 1) {
                             setProductQuantity(productQuantity - 1);
-                            setProductTotal(product.price * (productQuantity - 1));
+                            setTotalPrice((productPrice + productAdditionalsTotal) * (productQuantity - 1));
                         }
                     }}></div>
                     <p>{productQuantity}</p>
                     <div className='plus-icon blue' onClick={() => {
                         setProductQuantity(productQuantity + 1);
-                        setProductTotal(product.price * (productQuantity + 1));
+                        setTotalPrice((productPrice + productAdditionalsTotal) * (productQuantity + 1));
                     }}></div>
                 </div>
                 <div className='add'>
                     <p>
-                        <button onClick={() => {
-                            let numbers = [];
-                            let checkboxs = [];
-                            product.additionals && product.additionals.map(additional => {
-                                additional.items.map((item, id) => {
-                                    if (additional.type === 'select') {
-                                        let value = document.getElementById(`checkbox-${id}`).checked;
-                                        checkboxs.push({
-                                            'name': item.name,
-                                            'value': value
-                                        });
-                                    } else {
-                                        let value = document.getElementById(`number-${id}`).value;
-                                        numbers.push({
-                                            'name': item.name,
-                                            'value': value
+                        <button
+                            onClick={() => {
+                                let numbers = [];
+                                let groups = [];
+                                editProduct && editProduct.groups && editProduct.groups.map(additional => {
+                                    groups.push(additional);
+                                    if (additional.additional && additional.additional.product_uuid === product.uuid) {
+                                        additional.additional.additionals.map(item => {
+                                            item && item.map(add => {
+                                                let value = document.getElementById(`number-${add.uuid}`).value;
+                                                numbers.push({
+                                                    'additional': add,
+                                                    'value': value,
+                                                });
+                                            })
                                         });
                                     };
                                 });
-                            });
-                            let cutlery = false;
-                            if (document.querySelector('input[name="radio-group"]:checked')) {
-                                cutlery = document.querySelector('input[name="radio-group"]:checked').id === 'true-cutlery' ? true : false;
-                            };
-                            let newCart = cart.filter(item => {
-                                if (item.id !== productId) {
-                                    return item;
-                                }
-                            });
-                            let id = parseInt(productId.split('-')[1]) - 1;
-                            newCart.splice(id, 0, {
-                                id: productId,
-                                product,
-                                qntd: productQuantity,
-                                price: productTotal,
-                                checkboxs: [...checkboxs],
-                                numbers: [...numbers],
-                                cutlery: cutlery
-                            });
-                            console.log('newCart', newCart);
-                            setCart(newCart);
-                            localStorage.setItem('Cart', JSON.stringify([...newCart]));
-                            props.navigate(`cart`);
-                        }}>SALVAR</button>
-                        <span>{productTotal && productTotal.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>
+                                let newCart = cart;
+                                let id = parseInt(productId.split('-')[1]) - 1;
+                                newCart.splice(id, 1, {
+                                    id: productId,
+                                    product,
+                                    qntd: productQuantity,
+                                    price: totalPrice,
+                                    productAdditionalsTotal,
+                                    cutlery: false,
+                                    restaurant: restaurant.name && restaurant.name,
+                                    additionals: numbers,
+                                    groups
+                                });
+                                console.log('newCart', newCart);
+                                setCart(newCart);
+                                localStorage.setItem('Cart', JSON.stringify([...newCart]));
+                                props.navigate(`cart`);
+                            }}>SALVAR</button>
+                        <span>{totalPrice && totalPrice.toLocaleString('pt-br', { style: 'currency', currency: 'BRL' })}</span>
                     </p>
                 </div>
             </div>
         </motion.div>
     )
 }
-export default Product;
+export default EditProduct;
